@@ -1,4 +1,41 @@
 @import "tailwindcss";
+@plugin "daisyui";
+
+@plugin "daisyui/theme" {
+  name: "wireframe";
+  default: false;
+  prefersdark: false;
+  color-scheme: "light";
+  --color-base-100: oklch(100% 0 0);
+  --color-base-200: oklch(97% 0 0);
+  --color-base-300: oklch(94% 0 0);
+  --color-base-content: oklch(20% 0 0);
+  --color-primary: oklch(87% 0 0);
+  --color-primary-content: oklch(26% 0 0);
+  --color-secondary: oklch(87% 0 0);
+  --color-secondary-content: oklch(26% 0 0);
+  --color-accent: oklch(87% 0 0);
+  --color-accent-content: oklch(26% 0 0);
+  --color-neutral: oklch(87% 0 0);
+  --color-neutral-content: oklch(26% 0 0);
+  --color-info: oklch(44% 0.11 240.79);
+  --color-info-content: oklch(90% 0.058 230.902);
+  --color-success: oklch(43% 0.095 166.913);
+  --color-success-content: oklch(90% 0.093 164.15);
+  --color-warning: oklch(47% 0.137 46.201);
+  --color-warning-content: oklch(92% 0.12 95.746);
+  --color-error: oklch(44% 0.177 26.899);
+  --color-error-content: oklch(88% 0.062 18.334);
+  --radius-selector: 0rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.25rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
 
 :root {
   --background: #ffffff;
@@ -24,3 +61,91 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.header {
+  @apply fixed top-0 left-0 w-full z-30 px-4 py-2 text-black font-bold flex items-center justify-center shadow;
+  font-size: clamp(1rem, 3vw, 1.5rem);
+}
+
+@media (max-width: 640px) {
+  .header {
+    @apply px-2 py-1;
+    font-size: clamp(0.85rem, 5vw, 1.1rem);
+  }
+}
+
+/* Diamond component styles - optimized for performance */
+.diamond-container {
+  width: clamp(8rem, 25vw, 12rem);
+  height: clamp(8rem, 25vw, 12rem);
+}
+
+.diamond-shape {
+  width: clamp(4rem, 12.5vw, 6rem);
+  height: clamp(4rem, 12.5vw, 6rem);
+}
+
+.diamond-text {
+  font-size: clamp(0.75rem, 1.5vw, 1.25rem);
+}
+
+.diamond-top {
+  top: clamp(-2rem, -2.5vw, -3rem);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.diamond-left {
+  left: clamp(-2rem, -2.5vw, -3rem);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.diamond-right {
+  right: clamp(-2rem, -2.5vw, -3rem);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.diamond-bottom {
+  bottom: clamp(-2rem, -2.5vw, -3rem);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+/* Slider styles */
+input[type="range"].slider {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input[type="range"].slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease-in-out;
+}
+
+input[type="range"].slider::-webkit-slider-thumb:hover {
+  background: #2563eb;
+  transform: scale(1.1);
+}
+
+input[type="range"].slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease-in-out;
+}
+
+input[type="range"].slider::-moz-range-thumb:hover {
+  background: #2563eb;
+  transform: scale(1.1);
+}
+
