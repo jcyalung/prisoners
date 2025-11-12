@@ -1,0 +1,22 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+.diamond-base {
+    @apply absolute border-2 border-black flex items-center justify-center transition-all duration-500 ease-in-out;
+}
+
+.cooperation {
+    @apply bg-green-500;
+}
+
+.defect-success {
+    @apply bg-warning;
+}
+
+.unselected {
+    @apply bg-white;
+}
+
+.defect { 
+    @apply bg-red-500;
+}
