@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { validateCode, testCompilation } from "@/utils/code-security";
+import { COOPERATE, DEFECT } from "@/constants";
 
 const Editor = dynamic(() => import("@monaco-editor/react").then(mod => mod.default), {
   ssr: false,
@@ -22,12 +23,11 @@ const DEFAULT_CODE = `// your strategy here
 // COOPERATE to cooperate
 return COOPERATE;`;
 
-const STRATEGY_TEMPLATE = `strategy(opponent_history : string[]) : string {
-    // your strategy here
-    // DEFECT to defect
-    // COOPERATE to cooperate
-    return COOPERATE;
-}`;
+const STRATEGY_TEMPLATE = `// Write only the function body, not a function declaration
+// You have access to: opponent_history (string[])
+// Return: COOPERATE or DEFECT
+// Example:
+return COOPERATE;`;
 
 export default function CodeEditor({ isOpen, onClose, onSave, initialCode, compact = false }: CodeEditorProps) {
   const [code, setCode] = useState(initialCode || DEFAULT_CODE);
@@ -37,9 +37,23 @@ export default function CodeEditor({ isOpen, onClose, onSave, initialCode, compa
     if (isOpen) {
       console.log("Loading code from localStorage");
       // Load code from localStorage when editor opens
-      const savedCode = typeof window !== 'undefined' 
+      let savedCode = typeof window !== 'undefined' 
         ? localStorage.getItem('customStrategyCode') || DEFAULT_CODE
         : DEFAULT_CODE;
+      
+      // Validate the loaded code - if it's invalid, reset to default
+      // This handles cases where old invalid code might be saved
+      if (savedCode && savedCode !== DEFAULT_CODE) {
+        const validation = validateCode(savedCode);
+        if (!validation.isValid) {
+          console.warn("Invalid code found in localStorage, resetting to default:", validation.error);
+          savedCode = DEFAULT_CODE;
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('customStrategyCode', DEFAULT_CODE);
+          }
+        }
+      }
+      
       setCode(savedCode);
       setError(null);
     }
@@ -56,9 +70,7 @@ export default function CodeEditor({ isOpen, onClose, onSave, initialCode, compa
 
       // Test compilation and execution using Web Worker
       try {
-        // Test compilation - this will throw if it fails
-        // This executes the code in a Web Worker with a test input
-        await testCompilation(code, "C", "D");
+        await testCompilation(code, COOPERATE, DEFECT);
         
         console.log("Code compiled and tested successfully in Web Worker");
         
@@ -105,7 +117,10 @@ export default function CodeEditor({ isOpen, onClose, onSave, initialCode, compa
       {!compact && (
         <div className="px-6 py-3 bg-blue-50 border-b border-gray-200">
           <div className="text-sm text-gray-700">
-            <p className="font-semibold mb-1">Function signature:</p>
+            <p className="font-semibold mb-1">Instructions:</p>
+            <p className="text-xs text-gray-600 mb-2">
+              Write only the function body code. <strong>Do not</strong> write a function declaration. The function wrapper is added automatically.
+            </p>
             <code className="bg-gray-100 px-2 py-1 rounded text-xs block mb-2">
               {STRATEGY_TEMPLATE}
             </code>

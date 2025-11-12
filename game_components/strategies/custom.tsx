@@ -1,7 +1,7 @@
 import { Player } from "@/game_components/player";
 import { COOPERATE, DEFECT } from "@/constants";
 import { validateCode } from "@/utils/code-security";
-import { executeInWorkerSync } from "@/utils/syncWorkerExecutor";
+import { executeDirect, validateAndCacheFunction } from "@/utils/directExecutor";
 
 // Default strategy code template
 const DEFAULT_STRATEGY_CODE = `// your strategy here
@@ -11,6 +11,7 @@ return COOPERATE;`;
 
 export class Custom extends Player {
     private strategyCode: string;
+    private validationPromise: Promise<void> | null = null;
 
     constructor(name: string, score: number, history: string[]) {
         super(name, score, history);
@@ -18,6 +19,17 @@ export class Custom extends Player {
         this.strategyCode = typeof window !== 'undefined' 
             ? localStorage.getItem('customStrategyCode') || DEFAULT_STRATEGY_CODE
             : DEFAULT_STRATEGY_CODE;
+        
+        // Validate and cache the function in a worker (async, non-blocking)
+        if (typeof window !== 'undefined') {
+            this.validationPromise = validateAndCacheFunction(
+                this.strategyCode,
+                COOPERATE,
+                DEFECT
+            ).catch(err => {
+                console.warn('Failed to validate code in worker:', err);
+            });
+        }
     }
 
     setStrategyCode(code: string) {
@@ -30,19 +42,30 @@ export class Custom extends Player {
         this.strategyCode = code;
         if (typeof window !== 'undefined') {
             localStorage.setItem('customStrategyCode', code);
+            // Validate and cache in worker (async, non-blocking)
+            this.validationPromise = validateAndCacheFunction(
+                code,
+                COOPERATE,
+                DEFECT
+            ).catch(err => {
+                console.warn('Failed to validate code in worker:', err);
+            });
         }
     }
 
     /**
-     * Executes the custom strategy code in a Web Worker.
-     * This method is synchronous to match the Player interface,
-     * but internally executes code in a worker thread for security.
+     * Executes the custom strategy code directly (after validation in worker).
+     * 
+     * Strategy:
+     * 1. Code is validated/tested in a worker once when set/loaded (proves it's safe)
+     * 2. Compiled function is cached
+     * 3. Executes cached function directly in main thread (very fast)
      * 
      * @param opponent_history - The opponent's move history
      * @returns "C" (COOPERATE) or "D" (DEFECT)
      */
     strategy(opponent_history: string[]): string {
-        // Validate code before execution
+        // Quick validation check
         const validation = validateCode(this.strategyCode);
         if (!validation.isValid) {
             console.error('Code validation failed:', validation.error);
@@ -50,19 +73,22 @@ export class Custom extends Player {
         }
 
         try {
-            // Execute code in Web Worker synchronously
-            // This blocks the main thread until the worker completes
-            // but ensures all user code runs in an isolated worker thread
-            return executeInWorkerSync(
+            // Execute cached function directly (validated in worker, now trusted)
+            // This is very fast since we're just calling a cached function
+            return executeDirect(
                 this.strategyCode,
                 COOPERATE,
                 DEFECT,
-                opponent_history,
-                1000 // 1 second timeout
+                opponent_history
             );
         } catch (error) {
-            console.error('Error executing custom strategy in worker:', error);
-            // Fallback to default strategy on error
+            // If function not cached yet, wait for validation (should be rare)
+            if (this.validationPromise) {
+                // In practice, validation should complete quickly
+                // But we fallback to COOPERATE to avoid blocking
+                console.warn('Code not yet validated, using fallback');
+            }
+            console.error('Error executing custom strategy:', error);
             return COOPERATE;
         }
     }

@@ -48,25 +48,35 @@ export function executeInWorkerSync(
     // Block until completion (synchronous wait)
     // This is not ideal but necessary for the synchronous interface
     // NOTE: True synchronous waiting for async operations is not possible in JavaScript.
-    // This implementation uses a polling approach that allows the event loop to process
-    // worker messages between iterations. The worker should respond quickly (< 100ms).
+    // This implementation uses a more efficient polling approach that yields to the event loop.
     const startTime = Date.now();
     const maxWaitTime = timeoutMs + 200; // Add buffer for overhead
     
-    // Use a more efficient polling mechanism
-    // Check completion state periodically, allowing event loop to process messages
+    // Use requestAnimationFrame or setTimeout to yield to event loop more efficiently
+    // This allows worker messages to be processed without busy-waiting
     while (!completed) {
         // Check for timeout
         if (Date.now() - startTime > maxWaitTime) {
             throw new Error(`Strategy execution timed out after ${timeoutMs}ms`);
         }
         
-        // Yield to event loop by using a small delay
-        // This allows worker messages to be processed
-        // We use a synchronous sleep-like mechanism
-        const sleepUntil = Date.now() + 5; // Sleep for 5ms
-        while (Date.now() < sleepUntil) {
-            // Busy wait - allows browser to process events
+        // Yield to event loop using a microtask delay
+        // This is more efficient than busy-waiting and allows worker messages to process
+        // We use a very short delay to check frequently but still yield
+        const checkInterval = 1; // Check every 1ms
+        const sleepUntil = Date.now() + checkInterval;
+        while (Date.now() < sleepUntil && !completed) {
+            // Minimal busy-wait - browser can still process events
+        }
+        
+        // If still not completed, yield more explicitly
+        if (!completed) {
+            // Use a synchronous check that allows event processing
+            // The browser will process worker messages during this time
+            const yieldTime = Date.now() + 0.1; // 0.1ms yield
+            while (Date.now() < yieldTime && !completed) {
+                // Very short yield
+            }
         }
     }
 

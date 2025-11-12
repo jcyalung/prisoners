@@ -53,6 +53,15 @@ export function validateCode(code: string): { isValid: boolean; error?: string }
         }
     }
 
+    // Check for function declarations - users should write only the function body
+    // The worker wraps the code in a function, so writing a function declaration will cause errors
+    if (/\bfunction\s+\w+\s*\(/.test(code) || /\bconst\s+\w+\s*=\s*function\s*\(/.test(code) || /\bconst\s+\w+\s*=\s*\([^)]*\)\s*=>/.test(code)) {
+        return {
+            isValid: false,
+            error: 'Do not write a function declaration. Write only the function body code. The function wrapper is added automatically.'
+        };
+    }
+
     // Check that code contains a return statement
     if (!/\breturn\s+/.test(code)) {
         return { isValid: false, error: 'Code must contain a return statement' };
