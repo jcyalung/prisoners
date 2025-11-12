@@ -30,35 +30,6 @@ const DANGEROUS_PATTERNS = [
     /\bconsole\s*\.\s*(log|warn|error|info|debug)/i, // console methods (optional, can allow)
 ];
 
-// Allowed patterns (whitelist approach)
-const ALLOWED_CONSTRUCTS = [
-    /\breturn\b/,                      // return statement
-    /\bif\s*\(/,                       // if statements
-    /\belse\b/,                        // else
-    /\bfor\s*\(/,                      // for loops
-    /\bwhile\s*\(/,                    // while loops
-    /\bconst\b/,                       // const declarations
-    /\blet\b/,                         // let declarations
-    /\bvar\b/,                         // var declarations (less preferred)
-    /\b===/,                           // strict equality
-    /!==/,                             // strict inequality
-    /\.length/,                        // array length
-    /\.push\s*\(/,                     // array push
-    /\.pop\s*\(/,                      // array pop
-    /\.slice\s*\(/,                    // array slice
-    /\.includes\s*\(/,                 // array includes
-    /\.indexOf\s*\(/,                   // array indexOf
-    /\.lastIndexOf\s*\(/,              // array lastIndexOf
-    /Math\./,                           // Math object (safe)
-    /Number\s*\(/,                     // Number constructor
-    /String\s*\(/,                     // String constructor
-    /Boolean\s*\(/,                    // Boolean constructor
-    /Array\s*\./,                      // Array static methods
-    /COOPERATE/,                       // COOPERATE constant
-    /DEFECT/,                          // DEFECT constant
-    /opponent_history/,                // opponent_history parameter
-];
-
 /**
  * Validates user code for security issues before execution.
  * This is a pre-check that runs on the main thread before code is sent to the Web Worker.

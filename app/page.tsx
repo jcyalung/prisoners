@@ -1,5 +1,4 @@
 "use client";
-import Diamond from "@/components/diamond/olddiamond";
 import Link from "next/link";
 
 export default function Home() {

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import CodeEditor from "@/components/code-editor";
+import StrategyDropdown from "./strategy-dropdown";
 
 interface PlayerProps {
   playerNumber: 1 | 2;
@@ -59,21 +60,14 @@ export default function Player({
         </div>
       </div>
       <span className="mt-2 text-sm font-medium text-black">Player {playerNumber}</span>
-      <span className="text-xs text-gray-600 mb-3">{getStrategyDisplayName(currentStrategy)}</span>
-      <div className="flex flex-col gap-1 mt-1 w-full">
-        {availableStrategies.map((strategyName) => (
-          <button
-            key={strategyName}
-            onClick={() => handleStrategyClick(strategyName)}
-            className={`px-3 py-1 text-xs rounded transition-colors font-medium ${
-              currentStrategy === strategyName
-                ? `${bgColor} text-white`
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
-          >
-            {getStrategyDisplayName(strategyName)}
-          </button>
-        ))}
+      <div className="mt-2 w-full max-w-full">
+        <StrategyDropdown
+          currentStrategy={currentStrategy}
+          availableStrategies={availableStrategies}
+          onStrategyChange={handleStrategyClick}
+          getStrategyDisplayName={getStrategyDisplayName}
+          color={color}
+        />
       </div>
       
       {/* Inline Code Editor when Custom is selected */}
