@@ -7,7 +7,7 @@ export class Joss extends Player {
         super("Joss", score, history);
     }
 
-    strategy(opponent_history : string[]) {
+    strategy(opponent_history : string[]) : string {
         if (opponent_history.length === 0) {
             return COOPERATE;
         }
@@ -15,7 +15,7 @@ export class Joss extends Player {
             return DEFECT;
         }
         else {
-            return opponent_history.at(-1);
+            return opponent_history[opponent_history.length - 1] ?? COOPERATE;
         }
     }
 }
