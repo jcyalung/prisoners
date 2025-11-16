@@ -1,5 +1,6 @@
 import { Player } from "@/game_components/player";
 import { SCORING } from "@/constants";
+// game logic
 export class Game {
     players : Player[] = [];
 
@@ -7,7 +8,13 @@ export class Game {
         this.players = players;
     }
 
-    round(round_number : number) {
+    /*
+        per round,
+        take player 1 decision and player 2 decision
+        determine the score then add scores to each player score
+        add the history of moves to the players
+    */
+    round(round_number? : number) {
         const p1_choice = this.players[0].strategy(this.players[1].history);
         const p2_choice = this.players[1].strategy(this.players[0].history);
         const scores = SCORING[p1_choice + p2_choice];

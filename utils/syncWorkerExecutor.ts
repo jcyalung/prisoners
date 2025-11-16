@@ -48,7 +48,7 @@ export function executeInWorkerSync(
     // Block until completion (synchronous wait)
     // This is not ideal but necessary for the synchronous interface
     // NOTE: True synchronous waiting for async operations is not possible in JavaScript.
-    // This implementation uses a more efficient polling approach that yields to the event loop.
+    // This implementation uses a more efficient polling approach that yields to the event loop. 
     const startTime = Date.now();
     const maxWaitTime = timeoutMs + 200; // Add buffer for overhead
     

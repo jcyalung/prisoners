@@ -26,9 +26,12 @@ export default function StrategyDropdown({
   const borderColor = color === "blue" ? "border-blue-500" : "border-purple-500";
   const focusBorderColor = color === "blue" ? "focus:border-blue-600" : "focus:border-purple-600";
 
+  // Safety check: ensure availableStrategies is always an array
+  const safeAvailableStrategies = Array.isArray(availableStrategies) ? availableStrategies : ["AlwaysCooperate"];
+
   // Group strategies
-  const playerInteractiveStrategies = availableStrategies.filter(s => s === "Custom" || s === "SelfPlay");
-  const computerStrategies = availableStrategies.filter(s => s !== "Custom" && s !== "SelfPlay");
+  const playerInteractiveStrategies = safeAvailableStrategies.filter(s => s === "Custom" || s === "SelfPlay");
+  const computerStrategies = safeAvailableStrategies.filter(s => s !== "Custom" && s !== "SelfPlay");
 
   // Measure and set dropdown width to match button width
   const updateDropdownWidth = () => {

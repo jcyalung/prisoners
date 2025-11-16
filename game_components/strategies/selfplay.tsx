@@ -1,5 +1,6 @@
 import { Player } from "@/game_components/player";
 import { COOPERATE } from "@/constants";
+// player can choose which action to do
 export class SelfPlay extends Player {
     private userChoice: string = COOPERATE;
 

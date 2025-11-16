@@ -10,15 +10,15 @@ export default function GamePage() {
     return (
         <GameComponent
             mode="game"
-            maxRoundsLimit={10000}
-            speedScaleMax={20}
-            speedScaleMin={1}
-            showWinnerMessage={true}
-            showHistoryLog={true}
-            showSelfPlayControls={true}
-            allowCustomStrategy={true}
-            player1StrategiesFilter={() => allStrategies}
-            player2StrategiesFilter={(strategies) => strategies.filter(strategy => strategy !== "SelfPlay" && strategy !== "Custom")}
+            roundLimit={10000}
+            speedMax={20}
+            speedMin={1}
+            showWinner={true}
+            historyLog={true}
+            selfPlayControls={true}
+            customStrategy={true}
+            p1Filter={() => allStrategies}
+            p2Filter={(strategies) => strategies.filter(strategy => strategy !== "SelfPlay" && strategy !== "Custom")}
         />
     );
 }

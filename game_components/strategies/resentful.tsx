@@ -8,6 +8,7 @@ export class Resentful extends Player {
 
     strategy(opponent_history : string[]) {
         console.log(this.opponent_defected);
+        console.log(opponent_history);
         if (opponent_history.length === 0) {
             return COOPERATE;
         }

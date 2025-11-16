@@ -82,7 +82,7 @@ export default function CodeEditor({ isOpen, onClose, onSave, initialCode, compa
         
         setError(null);
         onSave(code);
-        // Don't close automatically - user can keep editing inline
+        onClose();
       } catch (compileError) {
         console.error('Compilation/execution error:', compileError);
         setError(`Code execution failed: ${compileError instanceof Error ? compileError.message : 'Unknown error'}`);
